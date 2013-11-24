@@ -3,3 +3,7 @@ An Arduino Due Sketch that communicates and logs data from the **BAMOCAR-D3** di
 
 ## Dependencies
 * Arduino CAN library ([available on the **can** branch](https://github.com/arduino/Arduino/tree/can))
+
+
+[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/ImperialRacingGreen/can-bus-data-logger/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
+
