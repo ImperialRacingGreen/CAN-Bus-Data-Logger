@@ -62,8 +62,8 @@ inline void setup_can_hardware() {
     Serial.println("CAN initialization OK");
     #endif
 
-    bamocar.set_primary_can(&CAN);
-    bamocar.set_sniffer_can(&CAN2);
+    bamocar.set_primary_can(CAN);
+    bamocar.set_sniffer_can(CAN2);
   }
   else {
     #ifdef DEBUG

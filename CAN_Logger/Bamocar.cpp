@@ -2,49 +2,49 @@
 #include <due_can.h>
 #include "Bamocar.h"
 
-void Bamocar::set_transmit_id(uint8_t txid)
+void Bamocar::set_transmit_id(uint8_t txID)
 {
-	m_txid = txid;
+	m_txID = txID;
 }
 
-void Bamocar::set_receive_id(uint8_t rxid)
+void Bamocar::set_receive_id(uint8_t rxID)
 {
-	m_rxid = rxid;
+	m_rxID = rxID;
 }
 
-void Bamocar::set_primary_can(CANRaw* pCan)
+void Bamocar::set_primary_can(CANRaw& rCan)
 {
-	m_pCan = pCan;
+	m_can = rCan;
 }
 
-void Bamocar::set_sniffer_can(CANRaw* pCan)
+void Bamocar::set_sniffer_can(CANRaw& rCan)
 {
-	m_pCanSniffer = pCan;
+	m_canSniffer = rCan;
 }
 
 
-void Bamocar::abort_transfer(uint8_t regid)
+void Bamocar::abort_transfer(uint8_t regID)
 {
   TX_CAN_FRAME txFrame;
 
-  txFrame.id = m_rxid;
+  txFrame.id = m_rxID;
   txFrame.dlc = 3;
   txFrame.data[0] = 0x3d;
-  txFrame.data[1] = regid;
+  txFrame.data[1] = regID;
   txFrame.data[2] = 0xff;
 
-  m_pCan->sendFrame(txFrame);
+  m_can.sendFrame(txFrame);
 }
 
-void Bamocar::request_transfer(uint8_t regid, uint8_t interval)
+void Bamocar::request_transfer(uint8_t regID, uint8_t interval)
 {
   TX_CAN_FRAME txFrame;
 
-  txFrame.id = m_rxid;
+  txFrame.id = m_rxID;
   txFrame.dlc = 3;
   txFrame.data[0] = 0x3d;
-  txFrame.data[1] = regid;
+  txFrame.data[1] = regID;
   txFrame.data[2] = interval;
 
-  m_pCan->sendFrame(txFrame);
+  m_can.sendFrame(txFrame);
 }
