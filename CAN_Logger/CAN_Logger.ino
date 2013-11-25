@@ -8,8 +8,6 @@
 #define NDRIVE_TXID  0x180
 #define NDRIVE_BPS   CAN_BPS_250K
 
-#define REG_N_ACTUAL 0x30
-
 #define DEBUG
 
 Bamocar bamocar;
@@ -23,13 +21,12 @@ inline void setup_serial() {
 void setup() {
   setup_serial();
 
-  bamocar.set_ndrive_options(NDRIVE_TXID, NDRIVE_RXID,NDRIVE_BPS);
+  bamocar.set_ndrive_options(NDRIVE_TXID, NDRIVE_RXID, NDRIVE_BPS);
 
-  bamocar.setup_can_hardware();
-  bamocar.init_primary_can();
+  bamocar.init_primary_can(CAN);
   
   #ifdef DEBUG
-  bamocar.init_can_sniffer_for_debugging();
+  bamocar.init_can_sniffer(CAN2);
   #endif
 
   test_1();
@@ -38,7 +35,6 @@ void setup() {
 // Test 1: request "N Actual"
 static void test_1(void)
 {
-  //CAN.global_send_transfer_cmd(CAN_TCR_MB1);
   bamocar.abort_transfer(REG_N_ACTUAL);
   delayMicroseconds(1000);
   bamocar.request_transfer(REG_N_ACTUAL, 100);
@@ -48,7 +44,7 @@ static void test_1(void)
 void loop() {
   RX_CAN_FRAME inFrame;
 
-  if (CAN.rx_avail()) {
+  if (bamocar.can_frame_available()) {
     CAN.get_rx_buff(&inFrame);
 
     #ifdef DEBUG

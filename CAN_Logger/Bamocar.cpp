@@ -9,36 +9,16 @@ void Bamocar::set_ndrive_options(uint8_t txID, uint8_t rxID, uint32_t baudrate)
   m_bps = baudrate;
 }
 
-void Bamocar::setup_can_hardware() {
-  // Verify CAN0 and CAN1 initialization
-  if (
-    CAN.init(SystemCoreClock, m_bps) &&
-    CAN2.init(SystemCoreClock, m_bps)
-  ) {
-
-    // Disable all CAN0 & CAN1 interrupts
-    CAN.disable_interrupt(CAN_DISABLE_ALL_INTERRUPT_MASK);
-    CAN2.disable_interrupt(CAN_DISABLE_ALL_INTERRUPT_MASK);
-
-    NVIC_EnableIRQ(CAN0_IRQn);
-    NVIC_EnableIRQ(CAN1_IRQn);
-    
-    #ifdef DEBUG
-    Serial.println("CAN initialization OK");
-    #endif
-
-    set_primary_can(CAN);
-    set_sniffer_can(CAN2);
-  }
-  else {
-    #ifdef DEBUG
-    Serial.println("CAN initialization (sync) ERROR");
-    #endif
-  }
-}
-
-void Bamocar::init_primary_can()
+void Bamocar::init_primary_can(CANRaw& rCan)
 {
+  m_can = rCan;
+
+  if(m_can.init(SystemCoreClock,m_bps))
+  {
+    m_can.disable_interrupt(CAN_DISABLE_ALL_INTERRUPT_MASK);
+    NVIC_EnableIRQ(CAN0_IRQn);
+  }
+
   m_can.reset_all_mailbox();
 
   m_can.mailbox_set_mode(0, CAN_MB_RX_MODE);
@@ -53,30 +33,28 @@ void Bamocar::init_primary_can()
   m_can.enable_interrupt(CAN_IER_MB0);
 }
 
-void Bamocar::init_can_sniffer_for_debugging()
+void Bamocar::init_can_sniffer(CANRaw& rCan)
 {
-  CAN2.reset_all_mailbox();
+  m_canSniffer = rCan;
 
-  CAN2.mailbox_set_mode(0, CAN_MB_RX_MODE);
-  CAN2.mailbox_set_accept_mask(0, 0x1FFFFFFF, false);
-  CAN2.mailbox_set_id(0, m_rxID, false);
+  if(m_canSniffer.init(SystemCoreClock,m_bps))
+  {
+    m_canSniffer.disable_interrupt(CAN_DISABLE_ALL_INTERRUPT_MASK);
+    NVIC_EnableIRQ(CAN1_IRQn);
+  }
 
-  CAN2.enable_interrupt(CAN_IER_MB0);
+  m_canSniffer.reset_all_mailbox();
+
+  m_canSniffer.mailbox_set_mode(0, CAN_MB_RX_MODE);
+  m_canSniffer.mailbox_set_accept_mask(0, 0x1FFFFFFF, false);
+  m_canSniffer.mailbox_set_id(0, m_rxID, false);
+
+  m_canSniffer.enable_interrupt(CAN_IER_MB0);
 }
 
 void Bamocar::set_debug_serial(HardwareSerial& rSerial)
 {
   m_serialDebug = rSerial;
-}
-
-void Bamocar::set_primary_can(CANRaw& rCan)
-{
-  m_can = rCan;
-}
-
-void Bamocar::set_sniffer_can(CANRaw& rCan)
-{
-  m_canSniffer = rCan;
 }
 
 void Bamocar::abort_transfer(uint8_t regID)
@@ -140,4 +118,9 @@ void Bamocar::parse_response(RX_CAN_FRAME rxFrame)
     m_serialDebug.print("\t");
     m_serialDebug.println(value);
   }  
+}
+
+bool Bamocar::can_frame_available()
+{
+  return m_can.rx_avail();
 }
