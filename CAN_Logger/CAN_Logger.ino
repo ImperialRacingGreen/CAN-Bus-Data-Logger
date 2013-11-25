@@ -39,26 +39,6 @@ void print_can_frame(RX_CAN_FRAME frame) {
   Serial.println();
 }
 
-void bamocar_request_transfer(uint8_t regid, uint8_t time) {
-  TX_CAN_FRAME txFrame;
-  txFrame.id = NDRIVE_RXID;
-  txFrame.dlc = 3;
-  txFrame.data[0] = 0x3d;
-  txFrame.data[1] = regid;
-  txFrame.data[2] = time;
-  CAN.sendFrame(txFrame);
-}
-
-void bamocar_abort_transfer(uint8_t regid) {
-  TX_CAN_FRAME txFrame;
-  txFrame.id = NDRIVE_RXID;
-  txFrame.dlc = 3;
-  txFrame.data[0] = 0x3d;
-  txFrame.data[1] = regid;
-  txFrame.data[2] = 0xff;
-  CAN.sendFrame(txFrame);
-}
-
 inline void setup_serial() {
   // start serial port at 115200 bps: 
   Serial.begin(115200);
@@ -119,6 +99,9 @@ inline void setup_can_sniffer_for_debugging() {
 void setup() {
   setup_serial();
 
+  bamocar.set_transmit_id(NDRIVE_TXID);
+  bamocar.set_receive_id(NDRIVE_RXID);
+
   setup_can_hardware();
   setup_can_mailbox();
   
@@ -133,9 +116,9 @@ void setup() {
 static void test_1(void)
 {
   //CAN.global_send_transfer_cmd(CAN_TCR_MB1);
-  bamocar_abort_transfer(REG_N_ACTUAL);
+  bamocar.abort_transfer(REG_N_ACTUAL);
   delayMicroseconds(1000);
-  bamocar_request_transfer(REG_N_ACTUAL, 100);
+  bamocar.request_transfer(REG_N_ACTUAL, 100);
   delayMicroseconds(1000);
 }
 
