@@ -14,31 +14,6 @@
 
 Bamocar bamocar;
 
-// void print_can_frame(RX_CAN_FRAME frame) {
-//   Serial.print("ID:");
-//   Serial.print(frame.id, HEX);
-//   Serial.print("\t");
-//   Serial.print("FID:");
-//   Serial.print(frame.fid, HEX);
-//   Serial.print("\t");
-//   Serial.print("RTR:");
-//   Serial.print(frame.rtr, HEX);
-//   Serial.print("\t");
-//   Serial.print("IDE:");
-//   Serial.print(frame.ide, HEX);
-//   Serial.print("\t");
-//   Serial.print("DLC:");
-//   Serial.print(frame.dlc, HEX);
-//   Serial.print("\t");
-//   Serial.print("Data:");
-//   Serial.print("\t");
-//   for (int i = 0; i < frame.dlc; i++) {
-//     Serial.print(frame.data[i], HEX);
-//     Serial.print("\t");
-//   }
-//   Serial.println();
-// }
-
 inline void setup_serial() {
   // start serial port at 115200 bps: 
   Serial.begin(115200);
@@ -109,16 +84,6 @@ static void test_1(void)
   delayMicroseconds(1000);
 }
 
-// Response parser
-void parse_response(RX_CAN_FRAME rxFrame) {
-  if (rxFrame.data[0] == REG_N_ACTUAL) {
-    float value = (rxFrame.data[1] | (rxFrame.data[2] << 8)) / 32767.0 * 100;
-    Serial.print(rxFrame.data[1] | (rxFrame.data[2] << 8), HEX);
-    Serial.print("\t");
-    Serial.println(value);
-  }
-}
-
 void loop() {
   RX_CAN_FRAME inFrame;
 
@@ -131,7 +96,7 @@ void loop() {
     #endif
 
     #ifndef DEBUG
-    parse_response(inFrame);
+    bamocar.parse_response(inFrame);
     #endif
 
     delayMicroseconds(100);

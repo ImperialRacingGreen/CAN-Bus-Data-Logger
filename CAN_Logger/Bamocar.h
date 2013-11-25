@@ -21,6 +21,7 @@ public:
 	void request_transfer(uint8_t regID, uint8_t interval);
 
 	void print_can_frame(RX_CAN_FRAME frame);
+	void parse_response(RX_CAN_FRAME frame);
 private:
 	CANRaw& m_can;
 	CANRaw& m_canSniffer;
