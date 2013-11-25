@@ -1,5 +1,6 @@
 #include "variant.h"
 #include <due_can.h>
+#include "Bamocar.h"
 
 #define CAN0_TX_PRIO  15
 
@@ -10,6 +11,8 @@
 #define REG_N_ACTUAL 0x30
 
 #define DEBUG
+
+Bamocar bamocar;
 
 void print_can_frame(RX_CAN_FRAME frame) {
   Serial.print("ID:");
@@ -78,6 +81,9 @@ inline void setup_can_hardware() {
     #ifdef DEBUG
     Serial.println("CAN initialization OK");
     #endif
+
+    bamocar.set_primary_can(&CAN);
+    bamocar.set_sniffer_can(&CAN2);
   }
   else {
     #ifdef DEBUG
@@ -112,6 +118,7 @@ inline void setup_can_sniffer_for_debugging() {
 
 void setup() {
   setup_serial();
+
   setup_can_hardware();
   setup_can_mailbox();
   
