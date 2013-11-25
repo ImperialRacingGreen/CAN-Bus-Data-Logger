@@ -20,34 +20,6 @@ inline void setup_serial() {
   bamocar.set_debug_serial(Serial);
 }
 
-inline void setup_can_hardware() {
-  // Verify CAN0 and CAN1 initialization
-  if (
-    CAN.init(SystemCoreClock, NDRIVE_BPS) &&
-    CAN2.init(SystemCoreClock, NDRIVE_BPS)
-  ) {
-
-    // Disable all CAN0 & CAN1 interrupts
-    CAN.disable_interrupt(CAN_DISABLE_ALL_INTERRUPT_MASK);
-    CAN2.disable_interrupt(CAN_DISABLE_ALL_INTERRUPT_MASK);
-
-    NVIC_EnableIRQ(CAN0_IRQn);
-    NVIC_EnableIRQ(CAN1_IRQn);
-    
-    #ifdef DEBUG
-    Serial.println("CAN initialization OK");
-    #endif
-
-    bamocar.set_primary_can(CAN);
-    bamocar.set_sniffer_can(CAN2);
-  }
-  else {
-    #ifdef DEBUG
-    Serial.println("CAN initialization (sync) ERROR");
-    #endif
-  }
-}
-
 inline void setup_can_sniffer_for_debugging() {
   CAN2.reset_all_mailbox();
 
@@ -61,10 +33,9 @@ inline void setup_can_sniffer_for_debugging() {
 void setup() {
   setup_serial();
 
-  bamocar.set_transmit_id(NDRIVE_TXID);
-  bamocar.set_receive_id(NDRIVE_RXID);
+  bamocar.set_ndrive_options(NDRIVE_TXID, NDRIVE_RXID,NDRIVE_BPS);
 
-  setup_can_hardware();
+  bamocar.setup_can_hardware();
   bamocar.init_primary_can();
   
   #ifdef DEBUG

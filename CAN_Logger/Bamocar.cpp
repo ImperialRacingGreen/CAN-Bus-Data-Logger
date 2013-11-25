@@ -2,14 +2,39 @@
 #include <due_can.h>
 #include "Bamocar.h"
 
-void Bamocar::set_transmit_id(uint8_t txID)
+void Bamocar::set_ndrive_options(uint8_t txID, uint8_t rxID, uint32_t baudrate)
 {
   m_txID = txID;
+  m_rxID = rxID;
+  m_bps = baudrate;
 }
 
-void Bamocar::set_receive_id(uint8_t rxID)
-{
-  m_rxID = rxID;
+void Bamocar::setup_can_hardware() {
+  // Verify CAN0 and CAN1 initialization
+  if (
+    CAN.init(SystemCoreClock, m_bps) &&
+    CAN2.init(SystemCoreClock, m_bps)
+  ) {
+
+    // Disable all CAN0 & CAN1 interrupts
+    CAN.disable_interrupt(CAN_DISABLE_ALL_INTERRUPT_MASK);
+    CAN2.disable_interrupt(CAN_DISABLE_ALL_INTERRUPT_MASK);
+
+    NVIC_EnableIRQ(CAN0_IRQn);
+    NVIC_EnableIRQ(CAN1_IRQn);
+    
+    #ifdef DEBUG
+    Serial.println("CAN initialization OK");
+    #endif
+
+    set_primary_can(CAN);
+    set_sniffer_can(CAN2);
+  }
+  else {
+    #ifdef DEBUG
+    Serial.println("CAN initialization (sync) ERROR");
+    #endif
+  }
 }
 
 void Bamocar::set_debug_serial(HardwareSerial& rSerial)
