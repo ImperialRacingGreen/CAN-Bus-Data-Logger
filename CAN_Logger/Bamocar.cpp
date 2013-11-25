@@ -4,24 +4,28 @@
 
 void Bamocar::set_transmit_id(uint8_t txID)
 {
-	m_txID = txID;
+  m_txID = txID;
 }
 
 void Bamocar::set_receive_id(uint8_t rxID)
 {
-	m_rxID = rxID;
+  m_rxID = rxID;
+}
+
+void Bamocar::set_debug_serial(HardwareSerial& rSerial)
+{
+  m_serialDebug = rSerial;
 }
 
 void Bamocar::set_primary_can(CANRaw& rCan)
 {
-	m_can = rCan;
+  m_can = rCan;
 }
 
 void Bamocar::set_sniffer_can(CANRaw& rCan)
 {
-	m_canSniffer = rCan;
+  m_canSniffer = rCan;
 }
-
 
 void Bamocar::abort_transfer(uint8_t regID)
 {

@@ -42,6 +42,7 @@ void print_can_frame(RX_CAN_FRAME frame) {
 inline void setup_serial() {
   // start serial port at 115200 bps: 
   Serial.begin(115200);
+  bamocar.set_debug_serial(Serial);
 }
 
 inline void setup_can_hardware() {
