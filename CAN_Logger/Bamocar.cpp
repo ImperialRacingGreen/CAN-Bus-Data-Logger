@@ -68,3 +68,29 @@ void Bamocar::init_primary_can()
 
   m_can.enable_interrupt(CAN_IER_MB0);
 }
+
+void Bamocar::print_can_frame(RX_CAN_FRAME frame)
+{
+  Serial.print("ID:");
+  Serial.print(frame.id, HEX);
+  Serial.print("\t");
+  Serial.print("FID:");
+  Serial.print(frame.fid, HEX);
+  Serial.print("\t");
+  Serial.print("RTR:");
+  Serial.print(frame.rtr, HEX);
+  Serial.print("\t");
+  Serial.print("IDE:");
+  Serial.print(frame.ide, HEX);
+  Serial.print("\t");
+  Serial.print("DLC:");
+  Serial.print(frame.dlc, HEX);
+  Serial.print("\t");
+  Serial.print("Data:");
+  Serial.print("\t");
+  for (int i = 0; i < frame.dlc; i++) {
+    Serial.print(frame.data[i], HEX);
+    Serial.print("\t");
+  }
+  Serial.println();
+}
