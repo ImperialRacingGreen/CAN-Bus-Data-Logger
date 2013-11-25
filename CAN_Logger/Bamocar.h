@@ -10,10 +10,10 @@ public:
 	Bamocar();
 	~Bamocar();
 
-	void set_ndrive_options(uint8_t txID, uint8_t rxID, uint32_t baudrate);
+	void set_ndrive_options(uint8_t txID, uint8_t rxID, uint32_t baudrate);		//initialises the transmit id, receive id, and baudrate of the class
 
 	void setup_can_hardware();							//initialises CAN1 and CAN2
-	void set_debug_serial(HardwareSerial& rSerial);
+	void set_debug_serial(HardwareSerial& rSerial);		//sets up serial for debugging purposes
 
 	void set_primary_can(CANRaw& rCan);					//initialises m_can
 	void set_sniffer_can(CANRaw& rCan);					//initialises m_canSniffer
