@@ -37,6 +37,33 @@ void Bamocar::setup_can_hardware() {
   }
 }
 
+void Bamocar::setup_can_sniffer_for_debugging()
+{
+  CAN2.reset_all_mailbox();
+
+  CAN2.mailbox_set_mode(0, CAN_MB_RX_MODE);
+  CAN2.mailbox_set_accept_mask(0, 0x1FFFFFFF, false);
+  CAN2.mailbox_set_id(0, m_rxID, false);
+
+  CAN2.enable_interrupt(CAN_IER_MB0);
+}
+
+void Bamocar::init_primary_can()
+{
+  m_can.reset_all_mailbox();
+
+  m_can.mailbox_set_mode(0, CAN_MB_RX_MODE);
+  m_can.mailbox_set_accept_mask(0, 0x1FFFFFFF, false);
+  m_can.mailbox_set_id(0, m_txID, false);
+
+  m_can.mailbox_set_mode(1, CAN_MB_TX_MODE);
+  m_can.mailbox_set_priority(1, 15);                   //15 is the CAN0 transmit priority
+  m_can.mailbox_set_accept_mask(1, 0x1FFFFFFF, false);
+  m_can.mailbox_set_id(1, m_rxID, false);
+
+  m_can.enable_interrupt(CAN_IER_MB0);
+}
+
 void Bamocar::set_debug_serial(HardwareSerial& rSerial)
 {
   m_serialDebug = rSerial;
@@ -76,22 +103,6 @@ void Bamocar::request_transfer(uint8_t regID, uint8_t interval)
   txFrame.data[2] = interval;
 
   m_can.sendFrame(txFrame);
-}
-
-void Bamocar::init_primary_can()
-{
-  m_can.reset_all_mailbox();
-
-  m_can.mailbox_set_mode(0, CAN_MB_RX_MODE);
-  m_can.mailbox_set_accept_mask(0, 0x1FFFFFFF, false);
-  m_can.mailbox_set_id(0, m_txID, false);
-
-  m_can.mailbox_set_mode(1, CAN_MB_TX_MODE);
-  m_can.mailbox_set_priority(1, 15);                   //15 is the CAN0 transmit priority
-  m_can.mailbox_set_accept_mask(1, 0x1FFFFFFF, false);
-  m_can.mailbox_set_id(1, m_rxID, false);
-
-  m_can.enable_interrupt(CAN_IER_MB0);
 }
 
 void Bamocar::print_can_frame(RX_CAN_FRAME frame)

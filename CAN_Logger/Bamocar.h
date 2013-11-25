@@ -13,7 +13,9 @@ public:
 	void set_ndrive_options(uint8_t txID, uint8_t rxID, uint32_t baudrate);
 
 	void setup_can_hardware();
+	void setup_can_sniffer_for_debugging();
 	void set_debug_serial(HardwareSerial& rSerial);
+
 	void set_primary_can(CANRaw& rCan);
 	void set_sniffer_can(CANRaw& rCan);
 	void init_primary_can();

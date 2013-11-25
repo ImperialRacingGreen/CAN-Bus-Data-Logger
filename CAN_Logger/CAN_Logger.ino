@@ -20,16 +20,6 @@ inline void setup_serial() {
   bamocar.set_debug_serial(Serial);
 }
 
-inline void setup_can_sniffer_for_debugging() {
-  CAN2.reset_all_mailbox();
-
-  CAN2.mailbox_set_mode(0, CAN_MB_RX_MODE);
-  CAN2.mailbox_set_accept_mask(0, 0x1FFFFFFF, false);
-  CAN2.mailbox_set_id(0, NDRIVE_RXID, false);
-
-  CAN2.enable_interrupt(CAN_IER_MB0);
-}
-
 void setup() {
   setup_serial();
 
@@ -39,7 +29,7 @@ void setup() {
   bamocar.init_primary_can();
   
   #ifdef DEBUG
-  setup_can_sniffer_for_debugging();
+  bamocar.setup_can_sniffer_for_debugging();
   #endif
 
   test_1();
