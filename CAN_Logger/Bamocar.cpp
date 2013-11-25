@@ -37,17 +37,6 @@ void Bamocar::setup_can_hardware() {
   }
 }
 
-void Bamocar::setup_can_sniffer_for_debugging()
-{
-  CAN2.reset_all_mailbox();
-
-  CAN2.mailbox_set_mode(0, CAN_MB_RX_MODE);
-  CAN2.mailbox_set_accept_mask(0, 0x1FFFFFFF, false);
-  CAN2.mailbox_set_id(0, m_rxID, false);
-
-  CAN2.enable_interrupt(CAN_IER_MB0);
-}
-
 void Bamocar::init_primary_can()
 {
   m_can.reset_all_mailbox();
@@ -62,6 +51,17 @@ void Bamocar::init_primary_can()
   m_can.mailbox_set_id(1, m_rxID, false);
 
   m_can.enable_interrupt(CAN_IER_MB0);
+}
+
+void Bamocar::init_can_sniffer_for_debugging()
+{
+  CAN2.reset_all_mailbox();
+
+  CAN2.mailbox_set_mode(0, CAN_MB_RX_MODE);
+  CAN2.mailbox_set_accept_mask(0, 0x1FFFFFFF, false);
+  CAN2.mailbox_set_id(0, m_rxID, false);
+
+  CAN2.enable_interrupt(CAN_IER_MB0);
 }
 
 void Bamocar::set_debug_serial(HardwareSerial& rSerial)

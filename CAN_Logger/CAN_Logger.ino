@@ -29,7 +29,7 @@ void setup() {
   bamocar.init_primary_can();
   
   #ifdef DEBUG
-  bamocar.setup_can_sniffer_for_debugging();
+  bamocar.init_can_sniffer_for_debugging();
   #endif
 
   test_1();
