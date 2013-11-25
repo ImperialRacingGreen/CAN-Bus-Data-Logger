@@ -82,6 +82,7 @@ inline void setup_can_mailbox() {
   CAN.mailbox_set_mode(1, CAN_MB_TX_MODE);
   CAN.mailbox_set_priority(1, CAN0_TX_PRIO);
   CAN.mailbox_set_accept_mask(1, 0x1FFFFFFF, false);
+  CAN.mailbox_set_id(1, NDRIVE_RXID, false);
 
   CAN.enable_interrupt(CAN_IER_MB0);
 }

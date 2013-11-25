@@ -13,6 +13,7 @@ public:
 	void set_receive_id(uint8_t rxid);
 	void set_primary_can(CANRaw* pCan);
 	void set_sniffer_can(CANRaw* pCan);
+	void init_primary_can();
 
 	void abort_transfer(uint8_t regid);
 	void request_transfer(uint8_t regid, uint8_t interval);
