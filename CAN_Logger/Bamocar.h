@@ -21,15 +21,15 @@ public:
     /**
      * Set up Serial for outputting debugging messages
      */
-    void set_serial_debug(Stream& rSerial);
+    void setSerialDebug(Stream& rSerial);
     /**
      * Set up primary CAN bus to transmit and receive messages
      */
-    void init_primary_can(CANRaw& rCan);
+    void initCAN(CANRaw& rCan);
     /**
      * Set up CAN2 to act as a sniffer between bamocar and arduino
      */
-    void init_sniffer_can(CANRaw& rCan);
+    void initCANSniffer(CANRaw& rCan);
     /**
      * Send CAN message
      */

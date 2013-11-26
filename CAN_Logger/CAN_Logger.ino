@@ -14,14 +14,14 @@ Bamocar bamocar;
 void setup() {
     // start serial port at 115200 bps
     Serial.begin(115200);
-    bamocar.set_serial_debug(Serial);
+    bamocar.setSerialDebug(Serial);
 
     bamocar.begin(NDRIVE_TXID, NDRIVE_RXID, NDRIVE_BPS);
 
-    bamocar.init_primary_can(CAN);
+    bamocar.initCAN(CAN);
 
     #ifdef DEBUG
-    bamocar.init_sniffer_can(CAN2);
+    bamocar.initCANSniffer(CAN2);
     #endif
 
     test_1();

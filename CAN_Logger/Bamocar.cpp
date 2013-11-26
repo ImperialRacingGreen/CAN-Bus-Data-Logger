@@ -12,12 +12,12 @@ void Bamocar::begin(uint8_t txID, uint8_t rxID, uint32_t baudRate)
     m_baudRate = baudRate;
 }
 
-void Bamocar::set_serial_debug(Stream& rSerial)
+void Bamocar::setSerialDebug(Stream& rSerial)
 {
     m_serialDebug = &rSerial;
 }
 
-void Bamocar::init_primary_can(CANRaw& rCan)
+void Bamocar::initCAN(CANRaw& rCan)
 {
     m_can = &rCan;
 
@@ -41,7 +41,7 @@ void Bamocar::init_primary_can(CANRaw& rCan)
     m_can->enable_interrupt(CAN_IER_MB0);
 }
 
-void Bamocar::init_sniffer_can(CANRaw& rCan)
+void Bamocar::initCANSniffer(CANRaw& rCan)
 {
     m_canSniffer = &rCan;
 
@@ -65,8 +65,8 @@ void Bamocar::send(BamocarRequest& request)
     TX_CAN_FRAME txFrame;
 
     txFrame.id = m_rxID;
-    txFrame.dlc = request.get_data_length();
-    request.fill_data_bytes(txFrame.data);
+    txFrame.dlc = request.getDataLength();
+    request.fillDataBytes(txFrame.data);
 
     m_can->sendFrame(txFrame);
 }
