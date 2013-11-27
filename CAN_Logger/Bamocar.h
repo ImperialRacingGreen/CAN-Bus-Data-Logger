@@ -5,10 +5,7 @@
 #include "BamocarRequest.h"
 #include <due_can.h>
 
-#define REG_N_ACTUAL 0x30
-
-class Bamocar
-{
+class Bamocar {
 public:
     Bamocar();
     /**
@@ -17,37 +14,66 @@ public:
      * @param rxID     Receive CAN ID
      * @param baudRate CAN Bus baud rate
      */
-    void begin(uint8_t txID, uint8_t rxID, uint32_t baudRate);
+    void         begin(uint8_t txID, uint8_t rxID, uint32_t baudRate);
+    /**
+     * Serial Debug getter
+     */
+    Stream&      getSerialDebug();
     /**
      * Set up Serial for outputting debugging messages
      */
-    void setSerialDebug(Stream& rSerial);
+    void         setSerialDebug(Stream& rSerial);
     /**
      * Set up primary CAN bus to transmit and receive messages
      */
-    void initCAN(CANRaw& rCan);
+    void         initCAN(CANRaw& rCan);
     /**
      * Set up CAN2 to act as a sniffer between bamocar and arduino
      */
-    void initCANSniffer(CANRaw& rCan);
+    void         initCANSniffer(CANRaw& rCan);
     /**
      * Send CAN message
      */
-    void send(BamocarRequest& request);
+    void         send(BamocarRequest& request);
+    /**
+     * Primary CAN getter
+     */
+    CANRaw       getCAN();
+    /**
+     * CAN Sniffer getter
+     */
+    CANRaw       getCANSniffer();
 
-    void print_can_frame(RX_CAN_FRAME frame);            //prints the can frame
-    void parse_response(RX_CAN_FRAME frame);            //parses the information held in can frame
-
-    bool can_frame_available();
+    void         print_can_frame(RX_CAN_FRAME frame);            //prints the can frame
+    void         parse_response(RX_CAN_FRAME frame);            //parses the information held in can frame
 private:
-    CANRaw* m_can;                        //can
-    CANRaw* m_canSniffer;                //can sniffer
-    Stream* m_serialDebug;        //serial for debugging purposes
-
-    uint8_t  m_txID;        //transmit id for can
-    uint8_t  m_rxID;        //receive id for can
-    uint32_t m_baudRate;        //baudrate for can
-
+    /**
+     * Primary CAN
+     */
+    CANRaw*      m_can;
+    /**
+     * Secondary CAN (for debugging)
+     */
+    CANRaw*      m_canSniffer;
+    /**
+     * Serial for debugging
+     */
+    Stream*      m_serialDebug;
+    /**
+     * Transmit ID of motor controller
+     */
+    uint8_t      m_txID;
+    /**
+     * Receive ID of motor controller
+     */
+    uint8_t      m_rxID;
+    /**
+     * Buadrate of motor controller
+     */
+    uint32_t     m_baudRate;
+    /**
+     * Temporary storage for CAN receive frame
+     */
     RX_CAN_FRAME m_rxFrame;
 };
 

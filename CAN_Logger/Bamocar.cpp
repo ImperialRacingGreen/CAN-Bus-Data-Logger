@@ -1,28 +1,52 @@
 #include "Bamocar.h"
 
-Bamocar::Bamocar()
-{
+/**
+ * ==========
+ * Bamocar
+ * ==========
+ */
+Bamocar::Bamocar() {
     // Do nothing
 }
 
-void Bamocar::begin(uint8_t txID, uint8_t rxID, uint32_t baudRate)
-{
+/**
+ * ==========
+ * Bamocar::begin
+ * ==========
+ */
+void Bamocar::begin(uint8_t txID, uint8_t rxID, uint32_t baudRate) {
     m_txID = txID;
     m_rxID = rxID;
     m_baudRate = baudRate;
 }
 
-void Bamocar::setSerialDebug(Stream& rSerial)
-{
+/**
+ * ==========
+ * Bamocar::getSerialDebug
+ * ==========
+ */
+Stream& Bamocar::getSerialDebug() {
+    return *m_serialDebug;
+}
+
+/**
+ * ==========
+ * Bamocar::setSerialDebug
+ * ==========
+ */
+void Bamocar::setSerialDebug(Stream& rSerial) {
     m_serialDebug = &rSerial;
 }
 
-void Bamocar::initCAN(CANRaw& rCan)
-{
+/**
+ * ==========
+ * Bamocar::initCAN
+ * ==========
+ */
+void Bamocar::initCAN(CANRaw& rCan) {
     m_can = &rCan;
 
-    if(m_can->init(SystemCoreClock, m_baudRate))
-    {
+    if(m_can->init(SystemCoreClock, m_baudRate)) {
         m_can->disable_interrupt(CAN_DISABLE_ALL_INTERRUPT_MASK);
         NVIC_EnableIRQ(CAN0_IRQn);
     }
@@ -41,12 +65,15 @@ void Bamocar::initCAN(CANRaw& rCan)
     m_can->enable_interrupt(CAN_IER_MB0);
 }
 
-void Bamocar::initCANSniffer(CANRaw& rCan)
-{
+/**
+ * ==========
+ * Bamocar::initCANSniffer
+ * ==========
+ */
+void Bamocar::initCANSniffer(CANRaw& rCan) {
     m_canSniffer = &rCan;
 
-    if(m_canSniffer->init(SystemCoreClock, m_baudRate))
-    {
+    if(m_canSniffer->init(SystemCoreClock, m_baudRate)) {
         m_canSniffer->disable_interrupt(CAN_DISABLE_ALL_INTERRUPT_MASK);
         NVIC_EnableIRQ(CAN1_IRQn);
     }
@@ -60,8 +87,12 @@ void Bamocar::initCANSniffer(CANRaw& rCan)
     m_canSniffer->enable_interrupt(CAN_IER_MB0);
 }
 
-void Bamocar::send(BamocarRequest& request)
-{
+/**
+ * ==========
+ * Bamocar::send
+ * ==========
+ */
+void Bamocar::send(BamocarRequest& request) {
     TX_CAN_FRAME txFrame;
 
     txFrame.id = m_rxID;
@@ -71,8 +102,30 @@ void Bamocar::send(BamocarRequest& request)
     m_can->sendFrame(txFrame);
 }
 
-void Bamocar::print_can_frame(RX_CAN_FRAME frame)
-{
+/**
+ * ==========
+ * Bamocar::getCAN
+ * ==========
+ */
+CANRaw Bamocar::getCAN() {
+    return *m_can;
+}
+
+/**
+ * ==========
+ * Bamocar::getCANSniffer
+ * ==========
+ */
+CANRaw Bamocar::getCANSniffer() {
+    return *m_canSniffer;
+}
+
+/**
+ * ==========
+ * Bamocar::print_can_frame
+ * ==========
+ */
+void Bamocar::print_can_frame(RX_CAN_FRAME frame) {
     m_serialDebug->print("ID:");
     m_serialDebug->print(frame.id, HEX);
     m_serialDebug->print("\t");
@@ -97,8 +150,12 @@ void Bamocar::print_can_frame(RX_CAN_FRAME frame)
     m_serialDebug->println();
 }
 
-void Bamocar::parse_response(RX_CAN_FRAME rxFrame)
-{
+/**
+ * ==========
+ * Bamocar::parse_response
+ * ==========
+ */
+void Bamocar::parse_response(RX_CAN_FRAME rxFrame) {
     //if id==REG_N_ACTUAL = 0x30
     if (rxFrame.data[0] == 0x30) {
         float value = (rxFrame.data[1] | (rxFrame.data[2] << 8)) / 32767.0 * 100;
@@ -106,9 +163,4 @@ void Bamocar::parse_response(RX_CAN_FRAME rxFrame)
         m_serialDebug->print("\t");
         m_serialDebug->println(value);
     }    
-}
-
-bool Bamocar::can_frame_available()
-{
-    return m_can->rx_avail();
 }

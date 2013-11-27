@@ -1,6 +1,7 @@
 #include "variant.h"
 #include <due_can.h>
 #include "Bamocar.h"
+#include "BamocarRegisters.h"
 #include "BamocarRequest.h"
 
 #define NDRIVE_RXID    0x210
@@ -9,21 +10,45 @@
 
 #define DEBUG
 
+/**
+ * Init bamocar class
+ */
 Bamocar bamocar;
 
-void setup() {
-    // start serial port at 115200 bps
+void setup()
+{
+    /**
+     * Start serial port at 115200 baud
+     */
     Serial.begin(115200);
     bamocar.setSerialDebug(Serial);
 
+    /**
+     * Set Bamocar addresses
+     */
     bamocar.begin(NDRIVE_TXID, NDRIVE_RXID, NDRIVE_BPS);
 
+    /**
+     * Attach CAN as primary bus
+     */
     bamocar.initCAN(CAN);
 
     #ifdef DEBUG
+    /**
+     * Attach CAN2 as secondary bus for debugging
+     */
     bamocar.initCANSniffer(CAN2);
     #endif
 
+    /**
+     * NVIC: Nested Vectored Interrupt Controller
+     */
+    NVIC_EnableIRQ(CAN0_IRQn);
+    NVIC_EnableIRQ(CAN1_IRQn);
+
+    /**
+     * Perform various tests
+     */
     test_1();
 }
 
@@ -39,14 +64,15 @@ static void test_1(void)
     delayMicroseconds(1000);
 }
 
-void loop() {
+void loop()
+{
     RX_CAN_FRAME inFrame;
 
-    if (bamocar.can_frame_available()) {
-        CAN.get_rx_buff(&inFrame);
+    if (bamocar.getCAN().rx_avail()) {
+        bamocar.getCAN().get_rx_buff(&inFrame);
 
         #ifdef DEBUG
-        Serial.print("CAN\t");
+        bamocar.getSerialDebug().print("CAN\t");
         bamocar.print_can_frame(inFrame);
         #endif
 
@@ -57,11 +83,11 @@ void loop() {
         delayMicroseconds(100);
     }
 
-    if (CAN2.rx_avail()) { 
-        CAN2.get_rx_buff(&inFrame);
+    if (bamocar.getCANSniffer().rx_avail()) { 
+        bamocar.getCANSniffer().get_rx_buff(&inFrame);
 
         #ifdef DEBUG
-        Serial.print("CAN2\t");
+        bamocar.getSerialDebug().print("CAN2\t");
         bamocar.print_can_frame(inFrame);
         #endif
 
