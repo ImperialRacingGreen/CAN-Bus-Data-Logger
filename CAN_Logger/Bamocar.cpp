@@ -14,7 +14,7 @@ Bamocar::Bamocar() {
  * Bamocar::begin
  * ==========
  */
-void Bamocar::begin(uint8_t txID, uint8_t rxID, uint32_t baudRate) {
+void Bamocar::begin(uint16_t txID, uint16_t rxID, uint32_t baudRate) {
     m_txID = txID;
     m_rxID = rxID;
     m_baudRate = baudRate;

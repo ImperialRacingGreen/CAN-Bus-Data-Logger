@@ -14,7 +14,7 @@ public:
      * @param rxID     Receive CAN ID
      * @param baudRate CAN Bus baud rate
      */
-    void         begin(uint8_t txID, uint8_t rxID, uint32_t baudRate);
+    void         begin(uint16_t txID, uint16_t rxID, uint32_t baudRate);
     /**
      * Serial Debug getter
      */
@@ -62,11 +62,11 @@ private:
     /**
      * Transmit ID of motor controller
      */
-    uint8_t      m_txID;
+    uint16_t      m_txID;
     /**
      * Receive ID of motor controller
      */
-    uint8_t      m_rxID;
+    uint16_t      m_rxID;
     /**
      * Buadrate of motor controller
      */
