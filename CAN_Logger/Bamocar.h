@@ -38,11 +38,11 @@ public:
     /**
      * Primary CAN getter
      */
-    CANRaw       getCAN();
+    CANRaw&      getCAN();
     /**
      * CAN Sniffer getter
      */
-    CANRaw       getCANSniffer();
+    CANRaw&      getCANSniffer();
 
     void         print_can_frame(RX_CAN_FRAME frame);            //prints the can frame
     void         parse_response(RX_CAN_FRAME frame);            //parses the information held in can frame

@@ -48,7 +48,6 @@ void Bamocar::initCAN(CANRaw& rCan) {
 
     if(m_can->init(SystemCoreClock, m_baudRate)) {
         m_can->disable_interrupt(CAN_DISABLE_ALL_INTERRUPT_MASK);
-        NVIC_EnableIRQ(CAN0_IRQn);
     }
 
     m_can->reset_all_mailbox();
@@ -75,7 +74,6 @@ void Bamocar::initCANSniffer(CANRaw& rCan) {
 
     if(m_canSniffer->init(SystemCoreClock, m_baudRate)) {
         m_canSniffer->disable_interrupt(CAN_DISABLE_ALL_INTERRUPT_MASK);
-        NVIC_EnableIRQ(CAN1_IRQn);
     }
 
     m_canSniffer->reset_all_mailbox();
@@ -100,6 +98,8 @@ void Bamocar::send(BamocarRequest& request) {
     request.fillDataBytes(txFrame.data);
 
     m_can->sendFrame(txFrame);
+
+    Serial.println("sent");
 }
 
 /**
@@ -107,7 +107,7 @@ void Bamocar::send(BamocarRequest& request) {
  * Bamocar::getCAN
  * ==========
  */
-CANRaw Bamocar::getCAN() {
+CANRaw& Bamocar::getCAN() {
     return *m_can;
 }
 
@@ -116,7 +116,7 @@ CANRaw Bamocar::getCAN() {
  * Bamocar::getCANSniffer
  * ==========
  */
-CANRaw Bamocar::getCANSniffer() {
+CANRaw& Bamocar::getCANSniffer() {
     return *m_canSniffer;
 }
 
@@ -129,8 +129,8 @@ void Bamocar::print_can_frame(RX_CAN_FRAME frame) {
     m_serialDebug->print("ID:");
     m_serialDebug->print(frame.id, HEX);
     m_serialDebug->print("\t");
-    m_serialDebug->print("FID:");
-    m_serialDebug->print(frame.fid, HEX);
+    // m_serialDebug->print("FID:");
+    // m_serialDebug->print(frame.fid, HEX);
     m_serialDebug->print("\t");
     m_serialDebug->print("RTR:");
     m_serialDebug->print(frame.rtr, HEX);
@@ -158,7 +158,7 @@ void Bamocar::print_can_frame(RX_CAN_FRAME frame) {
 void Bamocar::parse_response(RX_CAN_FRAME rxFrame) {
     //if id==REG_N_ACTUAL = 0x30
     if (rxFrame.data[0] == 0x30) {
-        float value = (rxFrame.data[1] | (rxFrame.data[2] << 8)) / 32767.0 * 100;
+        int32_t value = int16_t(rxFrame.data[1] | (rxFrame.data[2] << 8)) / 32767.0 * 4000; // @todo replace 4000 with nMax
         m_serialDebug->print(rxFrame.data[1] | (rxFrame.data[2] << 8), HEX);
         m_serialDebug->print("\t");
         m_serialDebug->println(value);

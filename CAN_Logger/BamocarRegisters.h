@@ -6,5 +6,6 @@
 #define REG_TEMP_MOTOR    0x49    //Active motor temperature
 #define REG_TEMP_IGBT     0x4A    //Active output stage temperature
 #define REG_TEMP_AIR      0x48    //Current air temperature in the servo
+#define REG_N_MAX         0xC8    //(SPEED_RPMMAX) Maximum rotation speed in turns per minute (Servo)
 
 #endif

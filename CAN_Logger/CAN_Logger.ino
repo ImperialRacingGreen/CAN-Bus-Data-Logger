@@ -55,12 +55,16 @@ void setup()
 // Test 1: request "N Actual"
 static void test_1(void)
 {
-    BamocarRequest request = BamocarRequest(REG_N_ACTUAL, 100);
-    bamocar.send(request);
-    delayMicroseconds(1000);
-
     BamocarAbortRequest abortRequest = BamocarAbortRequest(REG_N_ACTUAL);
     bamocar.send(abortRequest);
+    delayMicroseconds(1000);
+
+    // BamocarRequest request = BamocarRequest(REG_N_ACTUAL, 100);
+    // bamocar.send(request);
+    // delayMicroseconds(1000);
+
+    BamocarRequest request = BamocarRequest(REG_N_MAX, 100);
+    bamocar.send(request);
     delayMicroseconds(1000);
 }
 
@@ -76,9 +80,9 @@ void loop()
         bamocar.print_can_frame(inFrame);
         #endif
 
-        #ifndef DEBUG
+        // #ifndef DEBUG
         bamocar.parse_response(inFrame);
-        #endif
+        // #endif
 
         delayMicroseconds(100);
     }
